@@ -1,0 +1,15 @@
+server:
+  port: 8181
+
+# swagger - 单组文档方式
+app:
+  swagger:
+    enabled: true
+    title: 全局唯一性ID
+    base-package: com.freeing.unqid.server.controller
+
+
+# 日志
+logging:
+  level:
+    com.common.unqid.leafcore: info

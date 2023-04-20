@@ -1,0 +1,22 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: oauth2-resource
+
+ # 授权服务器配置
+security:
+  oauth2:
+    client:
+      client-id: XcWebApp
+      client-secret: XcWebApp
+      # 授权服务器的认证和令牌接口
+      access-token-uri: http://localhost:9999/oauth/token
+      # 授权服务器的授权码接口
+      user-authorization-uri: http://localhost:9999/oauth/authorize
+    resource:
+      # 资源服务器的请求授权服务器校验令牌的接口
+      token-info-uri: http://localhost:9999/oauth/check_token
+      # 这样的设置资源不管用，原因未知，请用代码方式设置
+      #id: "xuecheng-plus"

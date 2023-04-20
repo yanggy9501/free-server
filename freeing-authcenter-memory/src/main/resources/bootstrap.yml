@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: freeing-authcenter
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      # 配置中心
+      config:
+        # 本地配置优先，开发测试时使用
+        override-none: true
+        server-addr: hadoop101:8848 #配置中心的地址
+        file-extension: yml #配置文件结尾的配置
+
+      # 服务注册中心
+      discovery:
+        server-addr: hadoop101:8848
+logging:
+  level:
+    com:
+     alibaba:
+      cloud:
+        nacos:
+          client: warn

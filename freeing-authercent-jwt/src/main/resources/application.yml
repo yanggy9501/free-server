@@ -1,0 +1,38 @@
+server:
+  port: 10000
+
+jwt:
+  keyPairName: jwt.jks
+  keyPairAlias: jwt
+  keyPairSecret: 123456
+  keyPairStoreSecret: 123456
+
+spring:
+  application:
+    name: authorization_server_center
+
+  # 数据源
+  datasource:
+    url: jdbc:mysql://hadoop101:3306/tl_mall_user?serverTimezone=GMT%2b8&characterEncoding=utf-8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+
+  # redis
+  redis:
+    database: 0
+    password: 123456
+    host: hadoop101
+    port: 6379
+
+  messages:
+    basename: message
+
+# mybatis-plus 配置
+mybatis-plus:
+  configuration:
+    # 驼峰命名
+    map-underscore-to-camel-case: true
+    mapper-locations:
+      - classpath:/**/mapper/*.xml
+
