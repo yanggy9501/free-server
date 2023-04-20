@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author yanggy
  */
 @SpringBootApplication
-public class ResourceServerApplication {
+public class JwtResourceServerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ResourceServerApplication.class, args);
+        SpringApplication.run(JwtResourceServerApplication.class, args);
     }
 }

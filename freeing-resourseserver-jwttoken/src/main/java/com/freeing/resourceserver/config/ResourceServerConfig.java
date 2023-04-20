@@ -16,12 +16,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-
-    /**
-     * 资源服务标识(和授权服务器的保持一致)
-     */
-    public static final String RESOURCE_ID = "xuecheng-plus";
-
     @Autowired
     TokenStore tokenStore;
 
@@ -29,6 +23,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(ResourceServerSecurityConfigurer resources) {
         // 资源 id
         resources
+            // 资源服务标识(和授权服务器的保持一致)
             .resourceId("xuecheng-plus")
             .tokenStore(tokenStore)
             // 无状态模式
@@ -40,6 +35,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.csrf().disable()
             .authorizeRequests()
             // 所有/r/**的请求必须认证通过
-            .anyRequest().authenticated();
+            .antMatchers("/**").authenticated()
+            .anyRequest().permitAll();
     }
 }

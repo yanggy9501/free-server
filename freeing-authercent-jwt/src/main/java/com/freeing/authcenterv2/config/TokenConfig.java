@@ -1,6 +1,5 @@
 package com.freeing.authcenterv2.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -19,12 +18,6 @@ import java.util.HashMap;
  **/
 @Configuration(proxyBeanMethods = true)
 public class TokenConfig {
-    @Autowired
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
-
-    @Autowired
-    private TokenStore tokenStore;
-
     /**
      * 使用JWT方式生成令牌
      *
@@ -32,7 +25,7 @@ public class TokenConfig {
      */
     @Bean
     public TokenStore tokenStore() {
-        return new JwtTokenStore(jwtAccessTokenConverter);
+        return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
     /**
@@ -48,22 +41,26 @@ public class TokenConfig {
         return converter;
     }
 
-
     /**
      * 令牌服务
+     * 【注意】：系统会自动注入一个 DefaultTokenServices，容器会出现两个 TokenServices，在注入时会出现异常
+     * 解决：
+     * 1. 采用 @Primary，指出其注入的优先级
+     * 2. byName 注入
      *
      * @return
      */
-    @Bean("myAuthorizationServerTokenServices")
+    @Bean(name = "jwtTokenService")
+    // @Primary
     public AuthorizationServerTokenServices tokenService() {
         DefaultTokenServices service = new DefaultTokenServices();
         // 支持刷新令牌
         service.setSupportRefreshToken(true);
         // 令牌存储策略
-        service.setTokenStore(tokenStore);
-        // 设置增强的 TokenEnhancer 或者
+        service.setTokenStore(tokenStore());
+        // Jwt 的 TokenEnhancer
          TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new JwtTokenEnhancer2(), jwtAccessTokenConverter));
+         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new JwtTokenEnhancer2(), jwtAccessTokenConverter()));
         service.setTokenEnhancer(tokenEnhancerChain);
 
         // 令牌默认有效期2小时
@@ -73,10 +70,10 @@ public class TokenConfig {
         return service;
     }
 
-
     /**
-     * Jwt token 增强
-     * 扩展信息
+     * Jwt token 增强，扩展信息
+     * 【注意】：这里不能继承 JwtAccessTokenConverter 否则 JwtTokenStore 会多次创建多次，造成最终的Jwt的工具类不是自己的
+     * 出现资源服务器无法校验（两边的密钥不一样了）
      */
     @Component
     public static class JwtTokenEnhancer2 implements TokenEnhancer {

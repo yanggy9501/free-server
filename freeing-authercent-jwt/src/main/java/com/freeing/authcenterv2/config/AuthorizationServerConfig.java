@@ -15,10 +15,12 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-
+    /**
+     * 容器中存在两个 TokenService，byName 注入
+     */
     @Autowired
-    @Qualifier("myAuthorizationServerTokenServices")
-    private AuthorizationServerTokenServices authorizationServerTokenServices;
+    @Qualifier("jwtTokenService")
+    private AuthorizationServerTokenServices jwtTokenService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -64,7 +66,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             // 认证管理器，密码模式需要
             .authenticationManager(authenticationManager)
             // 令牌管理服务
-            .tokenServices(authorizationServerTokenServices)
+            .tokenServices(jwtTokenService)
             .allowedTokenEndpointRequestMethods(HttpMethod.POST);
     }
 

@@ -18,7 +18,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
     /**
      * 认证需要
      *
