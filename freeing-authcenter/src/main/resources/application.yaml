@@ -1,0 +1,136 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: freeing-admin
+  datasource:
+    druid:
+      web-stat-filter:
+        # 不统计这些请求数据
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+      stat-view-servlet:
+        # 访问监控网页的登录用户名和密码
+        login-username: druid
+        login-password: druid
+      validation-query: SELECT 1
+    # mybatis-plus 动态数据源
+    dynamic:
+      # 默认数据源
+      primary: uaa
+      # 未匹配到数据源时，true抛异常，false使用默认数据源
+      strict: true
+      #  数据源
+      datasource:
+        # 用户
+        uaa:
+          url: jdbc:mysql://hadoop101:3306/db_authcenter?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456
+        # 库存
+        goods:
+          url: jdbc:mysql://hadoop101:3306/tl_mall_goods?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456
+        # 促销
+        promotion:
+          url: jdbc:mysql://hadoop101:3306/tl_mall_promotion?characterEncoding=utf-8&useSSL=false
+          username: root
+          password: 123456
+        # 通用
+        normal:
+          url: jdbc:mysql://hadoop101:3306/tl_mall_normal?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456
+        # 订单
+        order:
+          url: jdbc:mysql://hadoop101:3306/tl_mall_order?characterEncoding=utf-8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456
+  main:
+    allow-bean-definition-overriding: true
+
+  # 微服务
+  cloud:
+    nacos:
+      discovery:
+        server-addr: hadoop101:8848
+        # 主配置文件结尾的配置
+        file-extension: yml
+
+  # 国际化
+  messages:
+    basename: i18n/message
+
+# mybatis-plus 配置
+mybatis-plus:
+  configuration:
+    # 驼峰命名
+    map-underscore-to-camel-case: true
+  mapper-locations:
+    - classpath:/**/mapper/*.xml
+
+jwt:
+  secret: "q1w2e3r4t5r6" #JWT存储的请求头
+  accessTokenExpire: 7200  # 令牌默认有效期2小时
+  refreshTokenExpire: 259200 # 刷新令牌默认有效期3天
+
+secure:
+  ignored:
+    # 安全路径白名单
+    urls:
+      - /swagger-ui.html
+      - /swagger-resources/**
+      - /swagger/**
+      - /**/v2/api-docs
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.ico
+      - /webjars/springfox-swagger-ui/**
+      - /actuator/**
+      - /druid/**
+      - /admin/login
+      - /admin/register
+      - /upload/product/**
+
+# swagger 配置
+#app:
+#  swagger:
+#    enabled: true
+#    docket:
+#      all: # 全量 API
+#        title: ALL API
+#        base-package: com.freeing.mall.controller
+#      upload: # 自定义分组模块名
+#        title: 文件存储服务
+#        description: 文件存储API在线文档
+#        version: 1.0
+#        #licenseUrl: http://localhost:8081/doc.html
+#        #termsOfServiceUrl: 服务条款URL
+#        base-package: com.freeing.mall.controller.upload
+#        basePath:
+#          - /aliyun/oss/** # 解析的url规则, 该路径为ant路径，指定controller中哪些url会被解析成文档
+#          - /upload/**
+#        #excludePath:
+#        #  - 在basePath基础上需要排除的url规则
+#        order: 1
+#        contact:
+#          name: yanggy
+#          url: yanggy.com
+#          email: yanggy@email.com
+
+#app:
+#  swagger:
+#    enabled: true
+#    docket:
+#      user:
+#        title: 用户模块
+#        base-package: com.freeing.mall.controller.user
+#      menu:
+#        title: 菜单模块
+#        base-package: com.freeing.mall.controller.menu
