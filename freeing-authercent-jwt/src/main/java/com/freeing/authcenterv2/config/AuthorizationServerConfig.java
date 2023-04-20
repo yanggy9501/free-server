@@ -1,6 +1,7 @@
 package com.freeing.authcenterv2.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,13 +12,12 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import javax.annotation.Resource;
-
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Resource(name = "authorizationServerTokenServicesCustom")
+    @Autowired
+    @Qualifier("myAuthorizationServerTokenServices")
     private AuthorizationServerTokenServices authorizationServerTokenServices;
 
     @Autowired

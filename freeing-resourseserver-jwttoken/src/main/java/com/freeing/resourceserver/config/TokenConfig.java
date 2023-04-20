@@ -14,21 +14,14 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 public class TokenConfig {
 
-    String SIGNING_KEY = "123";
-
-
-//    @Bean
-//    public TokenStore tokenStore() {
-//        //使用内存存储令牌（普通令牌）
-//        return new InMemoryTokenStore();
-//    }
+    String SIGNING_KEY = "123abcd";
 
     @Autowired
     private JwtAccessTokenConverter accessTokenConverter;
 
     @Bean
     public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
+        return new JwtTokenStore(accessTokenConverter);
     }
 
     @Bean

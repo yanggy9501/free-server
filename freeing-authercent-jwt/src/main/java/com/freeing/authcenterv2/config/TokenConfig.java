@@ -1,23 +1,30 @@
 package com.freeing.authcenterv2.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
  * Token 配置
  **/
-@Configuration
+@Configuration(proxyBeanMethods = true)
 public class TokenConfig {
+    @Autowired
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
+
+    @Autowired
+    private TokenStore tokenStore;
+
     /**
      * 使用JWT方式生成令牌
      *
@@ -25,7 +32,7 @@ public class TokenConfig {
      */
     @Bean
     public TokenStore tokenStore() {
-        return new JwtTokenStore(jwtAccessTokenConverter());
+        return new JwtTokenStore(jwtAccessTokenConverter);
     }
 
     /**
@@ -33,11 +40,11 @@ public class TokenConfig {
      *
      * @return
      */
-    @Bean
+    @Bean("jwtAccessTokenConverter")
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         // 加密密钥（可以采用属性注入方式生产中建议加密）
-        converter.setSigningKey("123");
+        converter.setSigningKey("123abcd");
         return converter;
     }
 
@@ -47,17 +54,17 @@ public class TokenConfig {
      *
      * @return
      */
-    @Bean(name="authorizationServerTokenServicesCustom")
+    @Bean("myAuthorizationServerTokenServices")
     public AuthorizationServerTokenServices tokenService() {
         DefaultTokenServices service = new DefaultTokenServices();
         // 支持刷新令牌
         service.setSupportRefreshToken(true);
         // 令牌存储策略
-        service.setTokenStore(tokenStore());
+        service.setTokenStore(tokenStore);
         // 设置增强的 TokenEnhancer 或者
-        // TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        // tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tulingTokenEnhancer(),jwtAccessTokenConverter()));
-        service.setTokenEnhancer(new JwtTokenEnhancer2());
+         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new JwtTokenEnhancer2(), jwtAccessTokenConverter));
+        service.setTokenEnhancer(tokenEnhancerChain);
 
         // 令牌默认有效期2小时
         service.setAccessTokenValiditySeconds(7200);
@@ -71,7 +78,8 @@ public class TokenConfig {
      * Jwt token 增强
      * 扩展信息
      */
-    public static class JwtTokenEnhancer2 extends  JwtAccessTokenConverter {
+    @Component
+    public static class JwtTokenEnhancer2 implements TokenEnhancer {
         @Override
         public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
             HashMap<String, Object> extra = new HashMap<>();
@@ -79,7 +87,7 @@ public class TokenConfig {
             extra.put("sex", "m");
             extra.put("other", "xxx");
             ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(extra);
-            return super.enhance(accessToken, authentication);
+            return accessToken;
         }
     }
 }

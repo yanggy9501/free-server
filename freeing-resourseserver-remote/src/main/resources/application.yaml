@@ -19,4 +19,4 @@ security:
       # 资源服务器的请求授权服务器校验令牌的接口
       token-info-uri: http://localhost:9999/oauth/check_token
       # 这样的设置资源不管用，原因未知，请用代码方式设置
-      #id: "xuecheng-plus"
+      #id: xuecheng-plus
