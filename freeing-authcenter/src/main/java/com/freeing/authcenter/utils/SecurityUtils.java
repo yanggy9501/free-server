@@ -87,7 +87,7 @@ public class SecurityUtils {
         /**
          * 头像
          */
-        private String pic;
+        private String icon;
 
         private String type;
 
